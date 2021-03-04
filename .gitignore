@@ -1,3 +1,11 @@
+# Generated RSA key from example.
+/key_rsa
+/key_rsa.pub
+
+# Temporary files from text editors.
+.*.sw?
+*~
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
