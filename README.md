@@ -1,0 +1,1 @@
+# varfish-clinical-beacon-client
