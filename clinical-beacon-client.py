@@ -93,9 +93,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Clinical Beacon Client")
     subparsers = parser.add_subparsers(title="subcommands")
 
-    parser_gen_key = subparsers.add_parser(
-        "gen-key", help="Create public/private key pair"
-    )
+    parser_gen_key = subparsers.add_parser("gen-key", help="Create public/private key pair")
     parser_gen_key.set_defaults(func=run_gen_key)
     parser_gen_key.add_argument(
         "--key-length",
@@ -122,9 +120,7 @@ def main(argv=None):
         help="String to use as the X-Beacon-User header value.",
         required=True,
     )
-    parser_query.add_argument(
-        "--endpoint", help="Remote endpoint URL.", required=True
-    )
+    parser_query.add_argument("--endpoint", help="Remote endpoint URL.", required=True)
     parser_query.add_argument(
         "--variant",
         help=(

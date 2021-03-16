@@ -65,7 +65,7 @@ $ ./clinical-beacon-client.py query \
   "id": "com.example.beacon",
   "name": "Example Beacon Site",
   "apiVersion": "v1.0.0",
-  "organisation": {
+  "organis": {
     "id": "com.example",
     "name": "Example Org",
     "description": "Just for example..."
