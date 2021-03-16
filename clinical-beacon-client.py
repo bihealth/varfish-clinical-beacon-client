@@ -32,38 +32,62 @@ def run_gen_key(args):
 def run_query(args):
     while args.endpoint.endswith("/"):
         args.endpoint = args.endpoint[:-1]
-    if args.variant:
-        logger.info("Executing query for %s...", args.variant)
-        url = "%s/query" % args.endpoint
-        chrom, pos, ref, alt = args.variant.split("-")
-        params = {
-            "assemblyId": "GRCh37",
-            "referenceName": chrom,
-            "start": pos,
-            "referenceBases": ref,
-            "alternateBases": alt,
-        }
-    else:
-        logger.info("Asking beacon for info...")
-        url = "%s/" % args.endpoint
-        params = None
 
     with open(args.key_file, "rb") as keyf:
         key = keyf.read()
 
-    headers = {"X-Beacon-User": args.beacon_user}
 
-    r = requests.get(
-        url,
-        headers=headers,
-        params=params,
-        auth=HTTPSignatureAuth(
-            algorithm="rsa-sha256",
-            key=key,
-            key_id=args.key_id,
-            headers=["date", "x-beacon-user"],
-        ),
-    )
+    if args.submit:
+            logger.info("Executing submit")
+            url = "%s/submit" % args.endpoint
+            params = None
+            with open(args.submit, 'rb') as json_file:
+                data = json.load( json_file )
+            headers = {
+                "X-Beacon-User": args.beacon_user,
+                "Content-Type": "application/json"
+            }
+            r = requests.post(
+                url,
+                json = data,
+                headers=headers,
+                auth=HTTPSignatureAuth(
+                    algorithm="rsa-sha256",
+                    key=key,
+                    key_id=args.key_id,
+                    headers=["date", "x-beacon-user"],
+                )
+            )
+    else:
+        if args.variant:
+            logger.info("Executing query for %s...", args.variant)
+            url = "%s/query" % args.endpoint
+            chrom, pos, ref, alt = args.variant.split("-")
+            params = {
+                "assemblyId": "GRCh37",
+                "referenceName": chrom,
+                "start": pos,
+                "referenceBases": ref,
+                "alternateBases": alt,
+            }
+        else:
+            logger.info("Asking beacon for info...")
+            url = "%s/" % args.endpoint
+            params = None
+
+        headers = {"X-Beacon-User": args.beacon_user}
+
+        r = requests.get(
+            url,
+            headers=headers,
+            params=params,
+            auth=HTTPSignatureAuth(
+                algorithm="rsa-sha256",
+                key=key,
+                key_id=args.key_id,
+                headers=["date", "x-beacon-user"],
+            ),
+        )
 
     if r.ok:
         logger.info("=> OK %s", r.status_code)
@@ -131,6 +155,9 @@ def main(argv=None):
             "Variant as CHROM-POS-REF-ALT.  If not specified then "
             "the beacon information is queried for."
         ),
+    )
+    parser_query.add_argument(
+        "--submit", help="Name of JSON file with variants submit to server"
     )
     parser_query.set_defaults(func=run_query)
 
